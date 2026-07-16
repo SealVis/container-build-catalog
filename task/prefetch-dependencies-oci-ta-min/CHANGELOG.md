@@ -11,6 +11,15 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.9.0
+
+### Added
+
+- Added optional `pip-index-url` parameter to pass `PIP_INDEX_URL` to Hermeto for pip dependency prefetch.
+  When set, this URL is used as a fallback package index when `requirements.txt` does not specify `--index-url`.
+  To use this parameter, add `pip-index-url` (type: string, default: `""`) to your pipeline params
+  and pass it to the prefetch-dependencies task.
+
 ## 0.8.0
 
 - Add Bundler and Cargo package registry proxy support - <https://github.com/konflux-ci/konflux-build-cli/pull/229>
