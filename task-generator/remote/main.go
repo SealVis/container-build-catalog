@@ -19,6 +19,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 
 	tektonapi "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
@@ -201,23 +202,23 @@ if ! [[ $IS_LOCALHOST ]]; then
 
 		// Before the build we sync the contents of the workspace to the remote host
 		for _, workspace := range task.Spec.Workspaces {
-			ret += "\n  rsync -razW \"$(workspaces." + workspace.Name + ".path)\"/ \"$SSH_HOST:$BUILD_DIR/workspaces/" + workspace.Name + "/\""
+			ret += "\n  rsync --timeout=300 -razW \"$(workspaces." + workspace.Name + ".path)\"/ \"$SSH_HOST:$BUILD_DIR/workspaces/" + workspace.Name + "/\""
 			podmanArgs += "    -v \"${BUILD_DIR@Q}/workspaces/" + workspace.Name + ":$(workspaces." + workspace.Name + ".path):Z\" \\\n"
 		}
 		// Also sync the volume mounts from the template
 		for _, volume := range task.Spec.StepTemplate.VolumeMounts {
-			ret += "\n  rsync -razW " + volume.MountPath + "/ \"$SSH_HOST:$BUILD_DIR/volumes/" + volume.Name + "/\""
+			ret += "\n  rsync --timeout=300 -razW " + volume.MountPath + "/ \"$SSH_HOST:$BUILD_DIR/volumes/" + volume.Name + "/\""
 			podmanArgs += "    -v \"${BUILD_DIR@Q}/volumes/" + volume.Name + ":" + volume.MountPath + ":Z\" \\\n"
 		}
 		for _, volume := range step.VolumeMounts {
 			if syncVolumes[volume.Name] {
-				ret += "\n  rsync -razW " + volume.MountPath + "/ \"$SSH_HOST:$BUILD_DIR/volumes/" + volume.Name + "/\""
+				ret += "\n  rsync --timeout=300 -razW " + volume.MountPath + "/ \"$SSH_HOST:$BUILD_DIR/volumes/" + volume.Name + "/\""
 				podmanArgs += "    -v \"${BUILD_DIR@Q}/volumes/" + volume.Name + ":" + volume.MountPath + ":Z\" \\\n"
 			}
 		}
-		ret += "\n  rsync -razW  \"$HOME/.docker/\" \"$SSH_HOST:$BUILD_DIR/.docker/\""
+		ret += "\n  rsync --timeout=300 -razW  \"$HOME/.docker/\" \"$SSH_HOST:$BUILD_DIR/.docker/\""
 		podmanArgs += "    -v \"${BUILD_DIR@Q}/.docker/:/root/.docker:Z\" \\\n"
-		ret += "\n  rsync -razW  \"/tekton/results/\" \"$SSH_HOST:$BUILD_DIR/results/\""
+		ret += "\n  rsync --timeout=300 -razW  \"/tekton/results/\" \"$SSH_HOST:$BUILD_DIR/results/\""
 		podmanArgs += "    -v \"${BUILD_DIR@Q}/results/:/tekton/results:Z\" \\\n"
 		ret += "\nfi\n"
 
@@ -265,7 +266,7 @@ if ! [[ $IS_LOCALHOST ]]; then
     ssh $SSH_ARGS "$SSH_HOST"  mkdir -p "${BUILD_DIR@Q}/var/tmp"
     PRIVILEGED_NESTED_FLAGS=(--privileged --mount "type=bind,source=$BUILD_DIR/var/tmp,target=/var/tmp,relabel=shared")
   fi`
-		ret += "\n  rsync -ra scripts \"$SSH_HOST:$BUILD_DIR\""
+		ret += "\n  rsync --timeout=300 -ra scripts \"$SSH_HOST:$BUILD_DIR\""
 		containerScript := "scripts/script-" + step.Name + ".sh"
 		for _, e := range step.Env {
 			env += "    -e " + e.Name + "=\"${" + e.Name + "@Q}\" \\\n"
@@ -281,11 +282,17 @@ if ! [[ $IS_LOCALHOST ]]; then
 
 		// Sync the contents of the volumes back so subsequent tasks can use them
 		ret += "\n  echo \"[$(date --utc -Ins)] Rsync back\""
-		for _, volume := range task.Spec.StepTemplate.VolumeMounts {
-			ret += "\n  rsync -razW --stats \"$SSH_HOST:$BUILD_DIR/volumes/" + volume.Name + "/\" " + volume.MountPath + "/"
+		sharedVolIndex := slices.IndexFunc(task.Spec.StepTemplate.VolumeMounts,
+			func(volume v1.VolumeMount) bool { return volume.Name == "shared" })
+		if sharedVolIndex != -1 {
+			volume := task.Spec.StepTemplate.VolumeMounts[sharedVolIndex]
+			ret += "\n  rsync --timeout=300 -razW --stats \"$SSH_HOST:$BUILD_DIR/volumes/" + volume.Name + "/\" " + volume.MountPath + "/"
+		} else {
+			panic("Did not find a 'shared' volume mount in the stepTemplate. " +
+				"If sharing data between steps is not needed anymore, remove this code.")
 		}
 		//sync back results
-		ret += "\n  rsync -razW --stats \"$SSH_HOST:$BUILD_DIR/results/\" \"/tekton/results/\""
+		ret += "\n  rsync --timeout=300 -razW --stats \"$SSH_HOST:$BUILD_DIR/results/\" \"/tekton/results/\""
 
 		ret += `
 else

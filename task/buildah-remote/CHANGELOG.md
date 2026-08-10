@@ -11,6 +11,14 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.11.1
+
+### Changed
+
+- Set a 5 minute I/O timeout for rsync transfers to and from the build VMs.
+  The build will fail if the connection goes 5 minutes without transfering
+  a single byte of data.
+
 ## 0.11.0
 
 ### Changed

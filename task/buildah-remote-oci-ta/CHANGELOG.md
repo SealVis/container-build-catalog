@@ -11,6 +11,22 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.11.1
+
+### Changed
+
+- Set a 5 minute I/O timeout for rsync transfers to and from the build VMs.
+  The build will fail if the connection goes 5 minutes without transfering
+  a single byte of data.
+
+### Fixed
+
+- Stopped rsyncing /var/workdir from build VMs back to the cluster.
+  This directory contains the git repository and prefetched dependencies,
+  which can be a lot of data. The rsync back was an unfortunate side effect
+  of how tooling generates the remote-oci-ta task variant from the base task,
+  and was completely unnecessary.
+
 ## 0.11.0
 
 ### Changed
