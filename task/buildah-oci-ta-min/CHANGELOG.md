@@ -11,6 +11,10 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.11.1
+
+*Version 0.11.1 only has relevant changes for the remote variants of this task.*
+
 ## 0.11.0
 
 ### Changed
