@@ -19,6 +19,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 
 	tektonapi "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
@@ -281,8 +282,14 @@ if ! [[ $IS_LOCALHOST ]]; then
 
 		// Sync the contents of the volumes back so subsequent tasks can use them
 		ret += "\n  echo \"[$(date --utc -Ins)] Rsync back\""
-		for _, volume := range task.Spec.StepTemplate.VolumeMounts {
+		sharedVolIndex := slices.IndexFunc(task.Spec.StepTemplate.VolumeMounts,
+			func(volume v1.VolumeMount) bool { return volume.Name == "shared" })
+		if sharedVolIndex != -1 {
+			volume := task.Spec.StepTemplate.VolumeMounts[sharedVolIndex]
 			ret += "\n  rsync -razW --stats \"$SSH_HOST:$BUILD_DIR/volumes/" + volume.Name + "/\" " + volume.MountPath + "/"
+		} else {
+			panic("Did not find a 'shared' volume mount in the stepTemplate. " +
+				"If sharing data between steps is not needed anymore, remove this code.")
 		}
 		//sync back results
 		ret += "\n  rsync -razW --stats \"$SSH_HOST:$BUILD_DIR/results/\" \"/tekton/results/\""

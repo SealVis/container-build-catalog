@@ -868,6 +868,8 @@ spec:
   volumes:
   - name: varlibcontainers
     emptyDir: {}
+  # Volume for sharing the output of the build step with subsequent steps.
+  # Don't use other volumes for this purpose, it won't work for the remote variants of this task.
   - name: shared
     emptyDir: {}
   - name: etc-pki-entitlement
