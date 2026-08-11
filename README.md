@@ -1,2 +1,3 @@
-# build-pipeline-tasks
-Tasks used in Konflux build pipeline
+# container-build-catalog
+
+Tasks used in the Konflux container build pipeline
