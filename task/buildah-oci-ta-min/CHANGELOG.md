@@ -11,6 +11,16 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.11.2
+
+### Fixed
+
+- Per-arch RPM filtering for the prefetch SBOM.
+  - With buildah task versions >= 0.10.0, < 0.11.2, the final SBOM would always
+    include the `x86_64` RPMs (and no other arches) from the prefetch SBOM,
+    even for images built on other arches.
+  - Now, the SBOM will contain the RPMs for the corresponding arch.
+
 ## 0.11.1
 
 *Version 0.11.1 only has relevant changes for the remote variants of this task.*

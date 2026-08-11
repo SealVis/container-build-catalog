@@ -5,7 +5,7 @@ metadata:
     tekton.dev/pipelines.minVersion: 0.12.1
     tekton.dev/tags: image-build, konflux
   labels:
-    app.kubernetes.io/version: 0.11.1
+    app.kubernetes.io/version: 0.11.2
     build.appstudio.redhat.com/build_type: docker
   name: buildah-remote-oci-ta
 spec:
@@ -580,6 +580,8 @@ spec:
         # Copy to a sibling dir instead in case we don't have write permissions to the prefetch_dir.
         # It's still on the same filesystem, so copying via reflinks should be possible.
         prefetch_dir_copy="/var/workdir/prefetch-copy"
+        # Save the build machine's architecture to pass to Mobster later
+        uname -m >/shared/prefetch-arch
       else
         prefetch_dir=""
         prefetch_dir_copy=""
