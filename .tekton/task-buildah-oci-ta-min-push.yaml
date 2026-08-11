@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   annotations:
-    build.appstudio.openshift.io/repo: https://github.com/konflux-ci/build-pipeline-tasks?rev={{revision}}
+    build.appstudio.openshift.io/repo: https://github.com/konflux-ci/container-build-catalog?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/cancel-in-progress: "false"
@@ -11,7 +11,7 @@ metadata:
       == "main" && ( "task/buildah-oci-ta-min/***".pathChanged() || ".tekton/task-buildah-oci-ta-min-push.yaml".pathChanged()
       || "Containerfile".pathChanged() )
   labels:
-    appstudio.openshift.io/application: konflux-build-pipeline-tasks
+    appstudio.openshift.io/application: konflux-container-build-catalog
     appstudio.openshift.io/component: task-buildah-oci-ta-min
     pipelines.appstudio.openshift.io/type: build
   name: task-buildah-oci-ta-min-on-push
@@ -23,7 +23,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rhtap-build-tenant/konflux-build-pipeline-tasks/buildah-oci-ta-min:{{revision}}
+    value: quay.io/redhat-user-workloads/rhtap-build-tenant/konflux-container-build-catalog/buildah-oci-ta-min:{{revision}}
   - name: dockerfile
     value: Containerfile
   - name: path-context
