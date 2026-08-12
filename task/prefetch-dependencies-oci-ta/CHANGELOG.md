@@ -11,6 +11,10 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.8.0
+
+- Add Bundler and Cargo package registry proxy support - <https://github.com/konflux-ci/konflux-build-cli/pull/229>
+
 ## 0.7.1
 
 - Hermeto release - <https://github.com/hermetoproject/hermeto/releases/tag/0.60.1>
