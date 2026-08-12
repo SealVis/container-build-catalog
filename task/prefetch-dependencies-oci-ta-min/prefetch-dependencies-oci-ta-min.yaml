@@ -6,7 +6,7 @@ metadata:
     tekton.dev/pipelines.minVersion: 0.12.1
     tekton.dev/tags: image-build, konflux
   labels:
-    app.kubernetes.io/version: 0.8.0
+    app.kubernetes.io/version: 0.9.0
   name: prefetch-dependencies-oci-ta-min
 spec:
   description: Task that prefetches project dependencies for hermetic build.
@@ -66,6 +66,12 @@ spec:
     type: string
   - description: The OCI repository where the Trusted Artifacts are stored.
     name: ociStorage
+    type: string
+  - default: ""
+    description: Python package index URL to use when prefetching pip dependencies.
+      Used as a fallback when requirements.txt does not specify --index-url. When
+      empty (default), the standard PyPI index is used.
+    name: pip-index-url
     type: string
   - default: spdx
     description: 'Select the SBOM format to generate. Valid values: spdx, cyclonedx.'
@@ -151,6 +157,8 @@ spec:
       value: $(params.config-file-content)
     - name: KBC_PD_ENABLE_PACKAGE_REGISTRY_PROXY
       value: $(params.enable-package-registry-proxy)
+    - name: PIP_INDEX_URL
+      value: $(params.pip-index-url)
     image: quay.io/konflux-ci/hermeto:0.60.1@sha256:db2c5cad9938b37e531a434ad759874bd064b2f52663278889eb1c65e3600301
     name: prefetch-dependencies
     script: |
@@ -190,6 +198,10 @@ spec:
       if [ -n "${CONFIG_FILE_CONTENT}" ]; then
         echo "${CONFIG_FILE_CONTENT}" >/mnt/config/config.yaml
         export KBC_PD_CONFIG_FILE=/mnt/config/config.yaml
+      fi
+
+      if [ -z "${PIP_INDEX_URL}" ]; then
+        unset PIP_INDEX_URL
       fi
 
       konflux-build-cli prefetch-dependencies
