@@ -14,7 +14,7 @@ spec:
         name: git-clone
       params:
         - name: url
-          value: https://github.com/konflux-ci/build-definitions
+          value: https://github.com/konflux-ci/container-build-catalog
         - name: revision
           value: v0.1.5
         - name: mergeTargetBranch
