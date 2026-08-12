@@ -8,11 +8,13 @@ additionalSteps:
   - at: 0
     name: skip-ta
     image: quay.io/konflux-ci/task-runner:2.0.0@sha256:4b01fbf98fa7155f5c21443c285f88853864ae7cc66981cf6b543fc6ba16b81b
+    when:
+      - input: $(params.input)
+        operator: in
+        values: [""]
     env:
-    - name: INPUT
-      value: $(params.input)
-    - name: SOURCE_ARTIFACT
-      value: $(params.SOURCE_ARTIFACT)
+      - name: SOURCE_ARTIFACT
+        value: $(params.SOURCE_ARTIFACT)
     computeResources:
       limits:
         memory: 64Mi
@@ -22,14 +24,17 @@ additionalSteps:
     script: |
       #!/bin/bash
 
-      if [ -z "${INPUT}" ]; then
-        mkdir -p /var/workdir/source
-        mkdir -p /var/workdir/cachi2
-        echo "true" > /var/workdir/source/.skip-trusted-artifacts
-        echo "true" > /var/workdir/cachi2/.skip-trusted-artifacts
-        echo -n "${SOURCE_ARTIFACT}" > "$(results.SOURCE_ARTIFACT.path)"
-        echo -n "" > "$(results.CACHI2_ARTIFACT.path)"
-      fi
+      echo -n "${SOURCE_ARTIFACT}" > "$(results.SOURCE_ARTIFACT.path)"
+      echo -n "" > "$(results.CACHI2_ARTIFACT.path)"
+stepWhen:
+  use-trusted-artifact:
+    - input: $(params.input)
+      operator: notin
+      values: [""]
+  create-trusted-artifact:
+    - input: $(params.input)
+      operator: notin
+      values: [""]
 preferStepTemplate: true
 removeWorkspaces:
   - source

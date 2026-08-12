@@ -118,6 +118,11 @@ spec:
         requests:
           cpu: "1"
           memory: 3Gi
+      when:
+        - input: $(params.input)
+          operator: notin
+          values:
+            - ""
       script: |
         #!/bin/bash
 

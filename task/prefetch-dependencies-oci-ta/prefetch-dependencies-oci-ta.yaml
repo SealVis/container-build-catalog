@@ -132,27 +132,24 @@ spec:
     - name: skip-ta
       image: quay.io/konflux-ci/task-runner:2.0.0@sha256:4b01fbf98fa7155f5c21443c285f88853864ae7cc66981cf6b543fc6ba16b81b
       env:
-        - name: INPUT
-          value: $(params.input)
         - name: SOURCE_ARTIFACT
           value: $(params.SOURCE_ARTIFACT)
       script: |
         #!/bin/bash
 
-        if [ -z "${INPUT}" ]; then
-          mkdir -p /var/workdir/source
-          mkdir -p /var/workdir/cachi2
-          echo "true" >/var/workdir/source/.skip-trusted-artifacts
-          echo "true" >/var/workdir/cachi2/.skip-trusted-artifacts
-          echo -n "${SOURCE_ARTIFACT}" >"$(results.SOURCE_ARTIFACT.path)"
-          echo -n "" >"$(results.CACHI2_ARTIFACT.path)"
-        fi
+        echo -n "${SOURCE_ARTIFACT}" >"$(results.SOURCE_ARTIFACT.path)"
+        echo -n "" >"$(results.CACHI2_ARTIFACT.path)"
       computeResources:
         limits:
           memory: 64Mi
         requests:
           cpu: 50m
           memory: 64Mi
+      when:
+        - input: $(params.input)
+          operator: in
+          values:
+            - ""
     - name: use-trusted-artifact
       image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:a61ef5dfee9a8720f7bc2d1d52001057ca6a22d2ddbae0db175b11d9ab95105a
       args:
@@ -163,6 +160,11 @@ spec:
           name: trusted-ca
           readOnly: true
           subPath: ca-bundle.crt
+      when:
+        - input: $(params.input)
+          operator: notin
+          values:
+            - ""
     - name: prefetch-dependencies
       image: quay.io/konflux-ci/hermeto:0.61.0@sha256:43596c6351cdf7188b09fd4dcf5c6b3bb8b57ea557e84a1aa624f60e74c624ce
       volumeMounts:
@@ -255,6 +257,11 @@ spec:
         requests:
           cpu: "1"
           memory: 3Gi
+      when:
+        - input: $(params.input)
+          operator: notin
+          values:
+            - ""
     - name: create-trusted-artifact
       image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:a61ef5dfee9a8720f7bc2d1d52001057ca6a22d2ddbae0db175b11d9ab95105a
       args:
@@ -277,3 +284,8 @@ spec:
         requests:
           cpu: "1"
           memory: 3Gi
+      when:
+        - input: $(params.input)
+          operator: notin
+          values:
+            - ""
