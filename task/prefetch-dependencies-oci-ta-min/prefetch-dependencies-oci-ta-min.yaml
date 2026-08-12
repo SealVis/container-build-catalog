@@ -112,7 +112,7 @@ spec:
   - args:
     - use
     - $(params.SOURCE_ARTIFACT)=/var/workdir/source
-    image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:0d5769f1a100f6b4f330cfa5d2bd22efc50bdb184e270ca84404e25c0b8fcf80
+    image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:dc542700b2e7ba806adfab360682d491c069bc2d6157d235c26adbe09480e26b
     name: use-trusted-artifact
     volumeMounts:
     - mountPath: /etc/pki/tls/certs/ca-custom-bundle.crt
@@ -220,7 +220,7 @@ spec:
     env:
     - name: IMAGE_EXPIRES_AFTER
       value: $(params.ociArtifactExpiresAfter)
-    image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:0d5769f1a100f6b4f330cfa5d2bd22efc50bdb184e270ca84404e25c0b8fcf80
+    image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:dc542700b2e7ba806adfab360682d491c069bc2d6157d235c26adbe09480e26b
     name: create-trusted-artifact
     volumeMounts:
     - mountPath: /etc/pki/tls/certs/ca-custom-bundle.crt
