@@ -21,7 +21,7 @@ spec:
       description: NO_PROXY value for cache proxy (when enable-cache-proxy is true)
   steps:
     - name: init
-      image: quay.io/konflux-ci/konflux-build-cli@sha256:b296232c9b0d478c0bd1f48911ead97cd786eebdc737b877797564567fda8eae
+      image: quay.io/konflux-ci/konflux-build-cli@sha256:d4fb1731d2b80cfd37e892ed835eb0bf46d5f710368875164564471da1632a0a
       computeResources:
         limits:
           memory: 256Mi
