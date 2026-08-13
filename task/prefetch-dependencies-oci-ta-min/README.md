@@ -1,4 +1,4 @@
-# prefetch-dependencies-oci-ta task
+# prefetch-dependencies-oci-ta-min task
 
 Task that prefetches project dependencies for hermetic build.
 
