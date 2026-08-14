@@ -51,6 +51,10 @@
         "schedule": [
           "on sunday"
         ]
+      },
+      {
+        "matchDepTypes": ["indirect"],
+        "enabled": false
       }
     ]
   },
