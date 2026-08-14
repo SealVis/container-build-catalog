@@ -7,7 +7,7 @@ metadata:
     tekton.dev/pipelines.minVersion: 0.12.1
     tekton.dev/tags: image-build, konflux
   labels:
-    app.kubernetes.io/version: 0.11.2
+    app.kubernetes.io/version: 0.12.0
     build.appstudio.redhat.com/build_type: docker
 spec:
   description: |-
@@ -84,7 +84,7 @@ spec:
     - name: CONTEXTUALIZE_SBOM
       description: Determines if SBOM will be contextualized.
       type: string
-      default: "true"
+      default: "false"
     - name: DOCKERFILE
       description: Path to the Dockerfile to build.
       type: string
@@ -420,7 +420,7 @@ spec:
           readOnly: true
           subPath: ca-bundle.crt
     - name: build
-      image: quay.io/konflux-ci/konflux-build-cli:latest@sha256:a48645cf2932d3e2bad76af97c37a1b294bad6a785cd610709c8ee017e8bef19
+      image: quay.io/konflux-ci/konflux-build-cli:latest@sha256:f2a1ac5ca99d46468c0d54cefc478bdd2ffdae01acfb492112201e2e099fd170
       args:
         - --build-args
         - $(params.BUILD_ARGS[*])
@@ -603,6 +603,12 @@ spec:
           if [[ "${HERMETIC}" == "false" && "${SBOM_SOURCE_SCAN_ENABLED}" == "true" ]]; then
             sbom_args+=(--syft-source-output /shared/sbom-source.json)
           fi
+          if [ "${CONTEXTUALIZE_SBOM}" == "true" ]; then
+            sbom_args+=(
+              --builder-metadata-output=/shared/builder-metadata.json
+              --buildprobe-output=/shared/buildprobe-metadata.yaml
+            )
+          fi
         fi
 
         # Prevent ShellCheck from giving a warning because 'image' is defined and 'IMAGE' is not.
@@ -687,7 +693,7 @@ spec:
             - SETFCAP
         runAsUser: 0
     - name: prepare-sboms
-      image: quay.io/konflux-ci/mobster:1.2.1-1782136886@sha256:1374bc35c71781987cce00ef5efe2be42923f83def19b60a570e947189b90d15
+      image: quay.io/konflux-ci/mobster:2.1.0@sha256:3eee4ecf87d50cb073318ab96097b9ea2cb6e5e59dd296a212e57017a9059f61
       args:
         - --additional-base-images
         - $(params.ADDITIONAL_BASE_IMAGES[*])
@@ -746,6 +752,16 @@ spec:
           --parsed-dockerfile-path "/shared/parsed_dockerfile.json"
           --base-image-digest-file "/shared/base_images_digests"
         )
+
+        # Add metadata to the Mobster args if provided
+        metadata_path="/shared/buildprobe-metadata.yaml"
+        builder_metadata_path="/shared/builder-metadata.json"
+        if [ -f "$metadata_path" ]; then
+          mobster_args+=(--metadata-path "$metadata_path")
+        fi
+        if [ -f "$builder_metadata_path" ]; then
+          mobster_args+=(--build-metadata-path "$builder_metadata_path")
+        fi
 
         if [ -f /shared/sbom-source.json ]; then
           mobster_args+=(--from-syft /shared/sbom-source.json)

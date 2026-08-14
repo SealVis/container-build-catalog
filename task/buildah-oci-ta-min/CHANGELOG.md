@@ -11,6 +11,18 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.12.0
+
+### Changed
+
+- Parameter `CONTEXTUALIZE_SBOM` is now set to `false` by default. The SBOM
+  contextualization received an overhaul, enabling the support for builder
+  content contextualization in SBOMs. To get involved in UAT, set this value
+  to `true` and report [issues](https://github.com/konflux-ci/mobster/issues)
+  to Mobster maintainers.
+- When `CONTEXTUALIZE_SBOM` is set to `true`, the built image will contain
+  new labels, `io.buildah.stage.name` and `io.buildah.stage.base`.
+
 ## 0.11.2
 
 ### Fixed
