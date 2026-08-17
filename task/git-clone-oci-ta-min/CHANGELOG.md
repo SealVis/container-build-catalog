@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.6
+
+### Changed
+
+- Git command failures now include the full command and stderr in Task logs ([konflux-build-cli#234](https://github.com/konflux-ci/konflux-build-cli/pull/234)).
+
+### Fixed
+
+- Broken symlinks that point inside the checkout no longer fail the clone. Broken symlinks pointing
+outside the source directory are still rejected ([konflux-build-cli#235](https://github.com/konflux-ci/konflux-build-cli/pull/235)).
+
 ## 0.2.5
 
 - Updated the konflux-build-cli image to a revision that fixes an internal git fetch error that was
