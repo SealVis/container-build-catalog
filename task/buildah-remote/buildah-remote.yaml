@@ -350,7 +350,7 @@ spec:
     - name: TASKRUN_NAME
       value: $(context.taskRun.name)
     - name: BUILDER_IMAGE
-      value: quay.io/konflux-ci/konflux-build-cli:latest@sha256:f2a1ac5ca99d46468c0d54cefc478bdd2ffdae01acfb492112201e2e099fd170
+      value: quay.io/konflux-ci/konflux-build-cli@sha256:d4fb1731d2b80cfd37e892ed835eb0bf46d5f710368875164564471da1632a0a
     - name: PLATFORM
       value: $(params.PLATFORM)
     - name: IMAGE_APPEND_PLATFORM
@@ -397,7 +397,7 @@ spec:
       value: $(params.SOURCE_DATE_EPOCH)
     - name: BUILDAH_REWRITE_TIMESTAMP
       value: $(params.REWRITE_TIMESTAMP)
-    image: quay.io/konflux-ci/konflux-build-cli:latest@sha256:f2a1ac5ca99d46468c0d54cefc478bdd2ffdae01acfb492112201e2e099fd170
+    image: quay.io/konflux-ci/konflux-build-cli@sha256:d4fb1731d2b80cfd37e892ed835eb0bf46d5f710368875164564471da1632a0a
     name: build
     script: |-
       #!/bin/bash
