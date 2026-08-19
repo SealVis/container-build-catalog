@@ -11,6 +11,13 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.10.1
+
+### Changed
+
+- When `input` is empty, only run the `skip-ta` step and skip other steps
+- Use `quay.io/konflux-ci/task-runner` for the `skip-ta` step instead of `ubi-minimal`
+
 ## 0.10.0
 
 - Hermeto release - <https://github.com/hermetoproject/hermeto/releases/tag/0.61.0>

@@ -6,7 +6,7 @@ metadata:
     tekton.dev/pipelines.minVersion: 0.12.1
     tekton.dev/tags: image-build, konflux
   labels:
-    app.kubernetes.io/version: 0.10.0
+    app.kubernetes.io/version: 0.10.1
   name: prefetch-dependencies-oci-ta-min
 spec:
   description: Task that prefetches project dependencies for hermetic build.
@@ -98,23 +98,20 @@ spec:
         cpu: 50m
         memory: 64Mi
     env:
-    - name: INPUT
-      value: $(params.input)
     - name: SOURCE_ARTIFACT
       value: $(params.SOURCE_ARTIFACT)
-    image: registry.access.redhat.com/ubi9/ubi-minimal:9.8-1786380870@sha256:7c372902c8d211db2d25c8277ba534a73b92742a334874dced829a63b0f21221
+    image: quay.io/konflux-ci/task-runner:2.0.0@sha256:4b01fbf98fa7155f5c21443c285f88853864ae7cc66981cf6b543fc6ba16b81b
     name: skip-ta
     script: |
       #!/bin/bash
 
-      if [ -z "${INPUT}" ]; then
-        mkdir -p /var/workdir/source
-        mkdir -p /var/workdir/cachi2
-        echo "true" >/var/workdir/source/.skip-trusted-artifacts
-        echo "true" >/var/workdir/cachi2/.skip-trusted-artifacts
-        echo -n "${SOURCE_ARTIFACT}" >"$(results.SOURCE_ARTIFACT.path)"
-        echo -n "" >"$(results.CACHI2_ARTIFACT.path)"
-      fi
+      echo -n "${SOURCE_ARTIFACT}" >"$(results.SOURCE_ARTIFACT.path)"
+      echo -n "" >"$(results.CACHI2_ARTIFACT.path)"
+    when:
+    - input: $(params.input)
+      operator: in
+      values:
+      - ""
   - args:
     - use
     - $(params.SOURCE_ARTIFACT)=/var/workdir/source
@@ -125,6 +122,11 @@ spec:
       name: trusted-ca
       readOnly: true
       subPath: ca-bundle.crt
+    when:
+    - input: $(params.input)
+      operator: notin
+      values:
+      - ""
   - computeResources:
       limits:
         cpu: 100m
@@ -216,6 +218,11 @@ spec:
     - mountPath: /mnt/service-ca
       name: service-ca
       readOnly: true
+    when:
+    - input: $(params.input)
+      operator: notin
+      values:
+      - ""
   - args:
     - create
     - --store
@@ -239,6 +246,11 @@ spec:
       name: trusted-ca
       readOnly: true
       subPath: ca-bundle.crt
+    when:
+    - input: $(params.input)
+      operator: notin
+      values:
+      - ""
   volumes:
   - name: activation-key
     secret:
