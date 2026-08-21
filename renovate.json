@@ -66,6 +66,17 @@
         "image: (?:['\"])?(?<depName>[0-9a-z./-]+)(?::(?<currentValue>[0-9a-z.-]+))?@(?<currentDigest>sha256:[a-f0-9]{64})(?:['\"])?"
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "task/buildah-remote/buildah-remote.yaml",
+        "task/buildah-remote-oci-ta/buildah-remote-oci-ta.yaml"
+      ],
+      "matchStrings": [
+        "value: (?:['\"])?(?<depName>[0-9a-z./-]+)(?::(?<currentValue>[0-9a-z.-]+))?@(?<currentDigest>sha256:[a-f0-9]{64})(?:['\"])?"
+      ],
+      "datasourceTemplate": "docker"
     }
   ]
 }
