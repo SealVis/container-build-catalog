@@ -49,7 +49,7 @@
         ],
         "groupName": "task-generator",
         "schedule": [
-          "on sunday"
+          "monthly"
         ]
       },
       {
