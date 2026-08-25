@@ -6,7 +6,7 @@ metadata:
     tekton.dev/pipelines.minVersion: 0.12.1
     tekton.dev/tags: image-build, konflux
   labels:
-    app.kubernetes.io/version: 0.10.1
+    app.kubernetes.io/version: 0.10.2
   name: prefetch-dependencies-oci-ta-min
 spec:
   description: Task that prefetches project dependencies for hermetic build.
@@ -161,7 +161,7 @@ spec:
       value: $(params.enable-package-registry-proxy)
     - name: PIP_INDEX_URL
       value: $(params.pip-index-url)
-    image: quay.io/konflux-ci/hermeto:0.61.0@sha256:43596c6351cdf7188b09fd4dcf5c6b3bb8b57ea557e84a1aa624f60e74c624ce
+    image: quay.io/konflux-ci/hermeto:0.61.1@sha256:cc3b3bdb0ee771a8c062709c32537116554e17a5ffc46b0625ea832e266504a8
     name: prefetch-dependencies
     script: |
       #!/bin/bash

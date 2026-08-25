@@ -11,6 +11,10 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.10.2
+
+- Hermeto release - <https://github.com/hermetoproject/hermeto/releases/tag/0.61.1>
+
 ## 0.10.1
 
 ### Changed
