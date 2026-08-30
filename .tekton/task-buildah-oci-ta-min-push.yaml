@@ -2,20 +2,20 @@ apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   annotations:
-    build.appstudio.openshift.io/repo: https://github.com/konflux-ci/container-build-catalog?rev={{revision}}
+    build.appstudio.openshift.io/repo: https://github.com/SealVis/container-build-catalog?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/cancel-in-progress: "false"
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "main" && ( "task/buildah-oci-ta-min/***".pathChanged() || ".tekton/task-buildah-oci-ta-min-push.yaml".pathChanged()
+    pipelinesascode.tekton.dev/on-cel-expression: event == "incoming" && target_branch
+      == "rebuild" && ( "task/buildah-oci-ta-min/***".pathChanged() || ".tekton/task-buildah-oci-ta-min-push.yaml".pathChanged()
       || "Containerfile".pathChanged() )
   labels:
-    appstudio.openshift.io/application: konflux-container-build-catalog
+    appstudio.openshift.io/application: container-build-catalog
     appstudio.openshift.io/component: task-buildah-oci-ta-min
     pipelines.appstudio.openshift.io/type: build
   name: task-buildah-oci-ta-min-on-push
-  namespace: rhtap-build-tenant
+  namespace: default-tenant
 spec:
   params:
   - name: git-url
@@ -23,7 +23,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rhtap-build-tenant/konflux-container-build-catalog/buildah-oci-ta-min:{{revision}}
+    value: quay.io/sealvis-workloads/default-tenant/container-build-catalog/buildah-oci-ta-min:{{revision}}
   - name: dockerfile
     value: Containerfile
   - name: path-context
