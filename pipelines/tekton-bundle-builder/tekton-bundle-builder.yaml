@@ -77,8 +77,14 @@ spec:
     - name: enable-cache-proxy
       value: $(params.enable-cache-proxy)
     taskRef:
-      name: init
-      version: current
+      params:
+      - name: name
+        value: init
+      - name: bundle
+        value: quay.io/konflux-ci/tekton-catalog/task-init:0.4.2@sha256:421003a5c077ecb820460e71637125ec9093d2101c749a32ede28e190283e9db
+      - name: kind
+        value: task
+      resolver: bundles
   - name: clone-repository
     params:
     - name: url
@@ -88,8 +94,14 @@ spec:
     runAfter:
     - init
     taskRef:
-      name: git-clone
-      version: current
+      params:
+      - name: name
+        value: git-clone
+      - name: bundle
+        value: quay.io/konflux-ci/tekton-catalog/task-git-clone:0.2.4@sha256:bb787553da840e226ea72147a7ccbe8553f887efef2ca24664c9ba2052018adf
+      - name: kind
+        value: task
+      resolver: bundles
     workspaces:
     - name: output
       workspace: workspace
@@ -104,8 +116,14 @@ spec:
     runAfter:
     - clone-repository
     taskRef:
-      name: prefetch-dependencies
-      version: current
+      params:
+      - name: name
+        value: prefetch-dependencies
+      - name: bundle
+        value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies:0.10.1@sha256:f10302a7ecde2ac3bf266144db0ec5253ae2cb3cf768b0205df06b0f631396f3
+      - name: kind
+        value: task
+      resolver: bundles
     workspaces:
     - name: source
       workspace: workspace
@@ -126,8 +144,14 @@ spec:
     runAfter:
     - prefetch-dependencies
     taskRef:
-      name: tkn-bundle
-      version: "0.2"
+      params:
+      - name: name
+        value: tkn-bundle
+      - name: bundle
+        value: quay.io/konflux-ci/tekton-catalog/task-tkn-bundle:0.2@sha256:6dcd0f578f60b093901f7d000a043353ebd3ee4c02b579a2adb3518eebbd0e35
+      - name: kind
+        value: task
+      resolver: bundles
     workspaces:
     - name: source
       workspace: workspace
@@ -143,8 +167,14 @@ spec:
     runAfter:
     - build-container
     taskRef:
-      name: build-image-index
-      version: current
+      params:
+      - name: name
+        value: build-image-index
+      - name: bundle
+        value: quay.io/konflux-ci/tekton-catalog/task-build-image-index:0.3.1@sha256:cc75f64deecccb1b59e96ac1182665a5342d79c9e22eebff63d26b0f00a4319c
+      - name: kind
+        value: task
+      resolver: bundles
   - name: sast-shell-check
     params:
     - name: image-digest
@@ -156,8 +186,14 @@ spec:
     runAfter:
     - build-image-index
     taskRef:
-      name: sast-shell-check
-      version: "0.1"
+      params:
+      - name: name
+        value: sast-shell-check
+      - name: bundle
+        value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:abeec416cd8d614ca054ad9a08df4eaece1dcb9a2dc637316c43defecf80c642
+      - name: kind
+        value: task
+      resolver: bundles
     when:
     - input: $(params.skip-checks)
       operator: in
@@ -177,8 +213,14 @@ spec:
     runAfter:
     - build-image-index
     taskRef:
-      name: sast-unicode-check
-      version: "0.4"
+      params:
+      - name: name
+        value: sast-unicode-check
+      - name: bundle
+        value: quay.io/konflux-ci/tekton-catalog/task-sast-unicode-check:0.4@sha256:1f9f3a3abfb70e6c8f5d2317ddca28f1a27200ab23061cb8eb2a24d9cb844d13
+      - name: kind
+        value: task
+      resolver: bundles
     when:
     - input: $(params.skip-checks)
       operator: in
@@ -196,8 +238,14 @@ spec:
     runAfter:
     - build-image-index
     taskRef:
-      name: apply-tags
-      version: current
+      params:
+      - name: name
+        value: apply-tags
+      - name: bundle
+        value: quay.io/konflux-ci/tekton-catalog/task-apply-tags:0.3@sha256:3ab844157eccd68e95e4852adc06c3c4ea674edb7865a474b0a898227f2893d6
+      - name: kind
+        value: task
+      resolver: bundles
   workspaces:
   - name: workspace
   - name: git-auth
