@@ -2,20 +2,20 @@ apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   annotations:
-    build.appstudio.openshift.io/repo: https://github.com/konflux-ci/container-build-catalog?rev={{revision}}
+    build.appstudio.openshift.io/repo: https://github.com/SealVis/container-build-catalog?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/cancel-in-progress: "false"
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "main" && ( "pipelines/docker-build-multi-platform-oci-ta/***".pathChanged() || ".tekton/pipeline-docker-build-multi-platform-oci-ta-push.yaml".pathChanged()
+    pipelinesascode.tekton.dev/on-cel-expression: event == "incoming" && target_branch
+      == "rebuild" && ( "pipelines/docker-build-multi-platform-oci-ta/***".pathChanged() || ".tekton/pipeline-docker-build-multi-platform-oci-ta-push.yaml".pathChanged()
       || ".tekton/pipelines/build-tekton-bundle.yaml".pathChanged() )
   labels:
     appstudio.openshift.io/application: container-build-catalog-pipelines
     appstudio.openshift.io/component: pipeline-docker-build-multi-platform-oci-ta
     pipelines.appstudio.openshift.io/type: build
   name: pipeline-docker-build-multi-platform-oci-ta-on-push
-  namespace: rhtap-build-tenant
+  namespace: default-tenant
 spec:
   params:
   - name: git-url

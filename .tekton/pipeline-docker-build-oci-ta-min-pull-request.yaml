@@ -2,21 +2,21 @@ apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   annotations:
-    build.appstudio.openshift.io/repo: https://github.com/konflux-ci/container-build-catalog?rev={{revision}}
+    build.appstudio.openshift.io/repo: https://github.com/SealVis/container-build-catalog?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/cancel-in-progress: "true"
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
-      == "main" && ( "pipelines/docker-build-oci-ta-min/***".pathChanged() || ".tekton/pipeline-docker-build-oci-ta-min-pull-request.yaml".pathChanged()
+    pipelinesascode.tekton.dev/on-cel-expression: event == "incoming" && target_branch
+      == "rebuild" && ( "pipelines/docker-build-oci-ta-min/***".pathChanged() || ".tekton/pipeline-docker-build-oci-ta-min-pull-request.yaml".pathChanged()
       || ".tekton/pipelines/build-tekton-bundle.yaml".pathChanged() )
   labels:
     appstudio.openshift.io/application: container-build-catalog-pipelines
     appstudio.openshift.io/component: pipeline-docker-build-oci-ta-min
     pipelines.appstudio.openshift.io/type: build
   name: pipeline-docker-build-oci-ta-min-on-pull-request
-  namespace: rhtap-build-tenant
+  namespace: default-tenant
 spec:
   params:
   - name: git-url
