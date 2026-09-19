@@ -17,12 +17,14 @@
   "tekton": {
     "includePaths": [
       ".tekton/**",
-      "task/**"
+      "task/**",
+      "pipelines/**"
     ],
     "packageRules": [
       {
         "matchFileNames": [
-          "task/**"
+          "task/**",
+          "pipelines/**"
         ],
         "schedule": [
           "at any time"
@@ -38,6 +40,17 @@
           "quay.io/konflux-ci/hermeto"
         ],
         "enabled": false
+      },
+      {
+        "groupName": "pipeline bundle tasks",
+        "matchFileNames": [
+          "pipelines/**"
+        ],
+        "branchPrefix": "konflux/mintmaker/",
+        "additionalBranchPrefix": "{{baseBranch}}/",
+        "group": {
+          "branchTopic": "{{{groupSlug}}}"
+        }
       }
     ]
   },
@@ -45,11 +58,21 @@
     "packageRules": [
       {
         "matchFileNames": [
-          "task-generator/**"
+          "task-generator/**",
+          "pipeline-generator/**"
         ],
-        "groupName": "task-generator",
+        "groupName": "generators",
         "schedule": [
           "monthly"
+        ]
+      },
+      {
+        "matchFileNames": [
+          "e2e-tests/**"
+        ],
+        "groupName": "e2e-tests go modules",
+        "schedule": [
+          "on sunday"
         ]
       },
       {
@@ -77,6 +100,14 @@
         "value: (?:['\"])?(?<depName>[0-9a-z./-]+)(?::(?<currentValue>[0-9a-z.-]+))?@(?<currentDigest>sha256:[a-f0-9]{64})(?:['\"])?"
       ],
       "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "registry.access.redhat.com/ubi10/go-toolset"
+      ],
+      "allowedVersions": "< 2.0"
     }
   ]
 }
