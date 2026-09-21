@@ -11,6 +11,14 @@ If that's not something you ever plan to do, consider removing this section.
 
 *Nothing yet.*
 
+## 0.3.2
+
+### Fixed
+
+- Cargo prefetched dependencies are now included in the source image. They are
+  vendored as unpacked source trees rather than archives, so previously they
+  were missed by the archive-type filter and left out of the source image.
+
 ## 0.3.1
 
 ### Changed
