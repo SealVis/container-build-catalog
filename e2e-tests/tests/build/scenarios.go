@@ -212,7 +212,7 @@ var TestScenarios = []TestScenarioSpec{
 		Group:              "hermetic",
 		RepoName:           "rust-cargo-sample-app",
 		Host:               "github.com",
-		Revision:           "7aed0c607c1cb6a33239135a3bab9bd6e7a66049",
+		Revision:           "f133426446fb997e7aeaa472724687edec0cb55b",
 		ContextDir:         ".",
 		DockerFilePath:     "Dockerfile",
 		PipelineBundleName: constants.DockerBuild,
