@@ -23,7 +23,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/sealvis-workloads/default-tenant/container-build-catalog/docker-build-oci-ta:{{revision}}
+    value: quay.io/sealvis-workloads/default-tenant/container-build-catalog-pipelines/docker-build-oci-ta:{{revision}}
   - name: dockerfile
     value: Containerfile
   - name: path-context
