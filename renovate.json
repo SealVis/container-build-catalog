@@ -108,6 +108,10 @@
         "registry.access.redhat.com/ubi10/go-toolset"
       ],
       "allowedVersions": "< 2.0"
+    },
+    {
+      "matchPackageNames": ["quay.io/konflux-ci/build-trusted-artifacts"],
+      "schedule": ["monthly"]
     }
   ]
 }
