@@ -31,13 +31,9 @@
         ]
       },
       {
-        "matchFileNames": [
-          "task/prefetch-dependencies/**",
-          "task/prefetch-dependencies-oci-ta/**",
-          "task/prefetch-dependencies-oci-ta-min/**"
-        ],
         "matchPackageNames": [
-          "quay.io/konflux-ci/hermeto"
+          "quay.io/konflux-ci/hermeto",
+          "quay.io/konflux-ci/mobster"
         ],
         "enabled": false
       },
