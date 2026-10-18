@@ -156,6 +156,7 @@ exceptions:
 Each entry must specify a task `path` and at least one of `steps` or `sidecars`.
 The script reports stale exceptions — entries that reference steps, sidecars, or task files that no longer exist or are now compliant.
 
+
 ### Task migration
 
 - script: [`hack/create-task-migration.sh`](hack/create-task-migration.sh)
