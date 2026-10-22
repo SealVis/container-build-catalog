@@ -7,6 +7,11 @@
 # ///
 """Check Task steps/sidecars for computeResources (v1) or resources (v1beta1)."""
 
+# <TEMPLATED FILE!>
+# This file comes from the templates at https://github.com/konflux-ci/task-repo-shared-ci.
+# Please consider sending a PR upstream instead of editing the file directly.
+# See the SHARED-CI.md document in this repo for more details.
+
 import subprocess
 import sys
 from dataclasses import dataclass

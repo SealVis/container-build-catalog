@@ -5,6 +5,7 @@
     ".github/resources/workspace-template.yaml",
     ".github/scripts/check_tekton_tasks.sh",
     ".github/scripts/test_tekton_tasks.sh",
+    ".github/workflows/check-compute-resources.yaml",
     ".github/workflows/check-kustomize-build.yaml",
     ".github/workflows/check-ta.yaml",
     ".github/workflows/check-task-migration.yaml",
@@ -72,7 +73,9 @@
         ]
       },
       {
-        "matchDepTypes": ["indirect"],
+        "matchDepTypes": [
+          "indirect"
+        ],
         "enabled": false
       }
     ]
@@ -80,7 +83,10 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["task/**/recipe.yaml", "task/**/patch.yaml"],
+      "managerFilePatterns": [
+        "task/**/recipe.yaml",
+        "task/**/patch.yaml"
+      ],
       "matchStrings": [
         "image: (?:['\"])?(?<depName>[0-9a-z./-]+)(?::(?<currentValue>[0-9a-z.-]+))?@(?<currentDigest>sha256:[a-f0-9]{64})(?:['\"])?"
       ],
