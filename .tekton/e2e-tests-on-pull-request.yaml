@@ -87,9 +87,9 @@ spec:
             value: >-
               '[{\"containerPort\":30012,\"hostPort\":8180,\"protocol\":\"TCP\"}]'
           - name: cpus
-            value: 64
+            value: 96
           - name: memory
-            value: 128
+            value: 384
           - name: spot
             value: 'false'
           - name: harden-control-plane
@@ -124,10 +124,13 @@ spec:
         taskRef:
           resolver: git
           params:
+            # TODO: REVERT BACK TO
+            #   url: https://github.com/konflux-ci/container-build-catalog.git
+            #   revision: main
             - name: url
-              value: https://github.com/konflux-ci/container-build-catalog.git
+              value: https://github.com/slimreaper35/container-build-catalog.git
             - name: revision
-              value: main
+              value: fbc
             - name: pathInRepo
               value: e2e-tests/tasks/container-build-catalog-e2e.yaml
         params:
@@ -150,8 +153,6 @@ spec:
           - name: docker-build-oci-ta-min-pipeline-bundle
             value: ""
           - name: docker-build-multi-platform-oci-ta-pipeline-bundle
-            value: ""
-          - name: fbc-builder-pipeline-bundle
             value: ""
     finally:
       - name: store-pipeline-status
