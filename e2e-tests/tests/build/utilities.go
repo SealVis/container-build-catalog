@@ -157,6 +157,10 @@ func getDefaultPipeline(pipelineBundleName constants.BuildPipelineType) string {
 		return utils.GetEnv(constants.CUSTOM_DOCKER_BUILD_OCI_TA_MIN_PIPELINE_BUNDLE_ENV, "quay.io/konflux-ci/tekton-catalog/pipeline-docker-build-oci-ta-min:devel")
 	case "docker-build-multi-platform-oci-ta":
 		return utils.GetEnv(constants.CUSTOM_DOCKER_BUILD_OCI_MULTI_PLATFORM_TA_PIPELINE_BUNDLE_ENV, "quay.io/konflux-ci/tekton-catalog/pipeline-docker-build-multi-platform-oci-ta:devel")
+	case "tekton-bundle-builder":
+		return utils.GetEnv("CUSTOM_TEKTON_BUNDLE_BUILDER_PIPELINE_BUNDLE", "quay.io/konflux-ci/tekton-catalog/pipeline-tekton-bundle-builder:devel")
+	case "tekton-bundle-builder-oci-ta":
+		return utils.GetEnv("CUSTOM_TEKTON_BUNDLE_BUILDER_OCI_TA_PIPELINE_BUNDLE", "quay.io/konflux-ci/tekton-catalog/pipeline-tekton-bundle-builder-oci-ta:devel")
 	default:
 		return ""
 	}
