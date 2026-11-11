@@ -2,6 +2,11 @@
 
 <!-- Format guidelines: https://keepachangelog.com/en/1.1.0/#how -->
 
+<!--
+Regular Hermeto updates should use patch task version bumps.
+Use a minor task version bump only when it provides a significant user-facing update.
+-->
+
 ## Unreleased
 
 <!--
@@ -10,6 +15,10 @@ If that's not something you ever plan to do, consider removing this section.
 -->
 
 *Nothing yet.*
+
+## 0.11.1
+
+- Hermeto release - <https://github.com/hermetoproject/hermeto/releases/tag/0.64.0>
 
 ## 0.11.0
 
