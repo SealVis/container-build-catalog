@@ -212,6 +212,10 @@ spec:
           value: $(tasks.create-test-pipeline-bundle.results.docker-build-oci-ta-min-pipeline-bundle)
         - name: docker-build-multi-platform-oci-ta-pipeline-bundle
           value: $(tasks.create-test-pipeline-bundle.results.docker-build-multi-platform-oci-ta-pipeline-bundle)
+        - name: tekton-bundle-builder-pipeline-bundle
+          value: $(tasks.create-test-pipeline-bundle.results.tekton-bundle-builder-pipeline-bundle)
+        - name: tekton-bundle-builder-oci-ta-pipeline-bundle
+          value: $(tasks.create-test-pipeline-bundle.results.tekton-bundle-builder-oci-ta-pipeline-bundle)
   finally:
     - name: store-pipeline-status
       when:
