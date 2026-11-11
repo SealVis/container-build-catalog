@@ -160,6 +160,8 @@ var TestScenarios = []TestScenarioSpec{
 		ConformaPolicyExclusions: []string{"hermetic_task", "rpm_repos", "source_image",
 			"tasks.required_tasks_found:tpa-scan", "test.no_erred_tests:ecosystem-cert-preflight-checks",
 			"test.no_failed_tests:ecosystem-cert-preflight-checks", "test.no_skipped_tests:sast-snyk-check",
+			// TODO: remove CVE results once we support roxctl-scan task in the test pipeline bundle.
+			"cve.cve_results_found",
 			"tasks.required_untrusted_task_found", "trusted_task.trusted", "slsa_build_scripted_build.image_built_by_trusted_task"},
 	},
 	{
@@ -179,6 +181,8 @@ var TestScenarios = []TestScenarioSpec{
 		ConformaPolicyExclusions: []string{"hermetic_task", "rpm_repos", "source_image",
 			"tasks.required_tasks_found:tpa-scan", "test.no_erred_tests:ecosystem-cert-preflight-checks",
 			"test.no_failed_tests:ecosystem-cert-preflight-checks", "test.no_skipped_tests:sast-snyk-check",
+			// TODO: remove CVE results once we support roxctl-scan task in the test pipeline bundle.
+			"cve.cve_results_found",
 			"tasks.required_untrusted_task_found", "trusted_task.trusted", "slsa_build_scripted_build.image_built_by_trusted_task"},
 	},
 	{
@@ -281,6 +285,8 @@ var TestScenarios = []TestScenarioSpec{
 		ConformaPolicyExclusions: []string{"rpm_repos", "source_image", "tasks.required_tasks_found:tpa-scan",
 			"base_image_registries.base_image_permitted:docker.io/library/node", "test.no_erred_tests:ecosystem-cert-preflight-checks",
 			"test.no_failed_tests:ecosystem-cert-preflight-checks", "test.no_skipped_tests:sast-snyk-check",
+			// TODO: remove CVE results once we support roxctl-scan task in the test pipeline bundle.
+			"cve.cve_results_found",
 			"tasks.required_untrusted_task_found", "trusted_task.trusted", "slsa_build_scripted_build.image_built_by_trusted_task"},
 	},
 	{

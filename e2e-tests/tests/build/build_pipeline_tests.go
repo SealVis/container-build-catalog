@@ -156,7 +156,8 @@ var _ = framework.BuildSuiteDescribe("Build pipeline E2E test", Label("build-pip
 					Skip("Skipping tekton task results validation, not applicable")
 					return
 				}
-				Expect(build.ValidateBuildPipelineTestResults(buildPipelineRun, f.AsKubeAdmin.CommonController.KubeRest(), false, scenario.PipelineBundleName == constants.DockerBuildOciTAMin)).To(Succeed())
+				// TODO: change the last argument once konflux-ci/e2e-tests drops clair-scan from the codebase.
+				Expect(build.ValidateBuildPipelineTestResults(buildPipelineRun, f.AsKubeAdmin.CommonController.KubeRest(), false, true)).To(Succeed())
 			})
 			It("floating tags are created successfully", func() {
 				if !scenario.CheckAdditionalTags {

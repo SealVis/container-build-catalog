@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -49,6 +50,14 @@ func CreateComponent(f *framework.Framework, scenarioName, testNamespace, compon
 	pipelineBundleName := scenario.PipelineBundleName
 	Expect(pipelineBundleName).ShouldNot(BeEmpty())
 	customBuildBundle := getDefaultPipeline(pipelineBundleName)
+
+	// TODO: remove this once we support roxctl-scan task in the test pipeline bundle.
+	tasksToRemove := []string{"roxctl-scan"}
+	customBuildBundle, err = removeTasksFromPipelineBundle(customBuildBundle, pipelineBundleName, tasksToRemove)
+	if err != nil {
+		return nil, fmt.Errorf("failed to remove non-testable tasks from the pipeline bundle with: %v", err)
+	}
+
 	if scenario.EnableHermetic {
 		//Update the build pipeline bundle with param hermetic=true
 		customBuildBundle, err = enableHermeticBuildInPipelineBundle(customBuildBundle, pipelineBundleName, scenario.PrefetchInput)
@@ -157,6 +166,10 @@ func getDefaultPipeline(pipelineBundleName constants.BuildPipelineType) string {
 		return utils.GetEnv(constants.CUSTOM_DOCKER_BUILD_OCI_TA_MIN_PIPELINE_BUNDLE_ENV, "quay.io/konflux-ci/tekton-catalog/pipeline-docker-build-oci-ta-min:devel")
 	case "docker-build-multi-platform-oci-ta":
 		return utils.GetEnv(constants.CUSTOM_DOCKER_BUILD_OCI_MULTI_PLATFORM_TA_PIPELINE_BUNDLE_ENV, "quay.io/konflux-ci/tekton-catalog/pipeline-docker-build-multi-platform-oci-ta:devel")
+	case "tekton-bundle-builder":
+		return utils.GetEnv("CUSTOM_TEKTON_BUNDLE_BUILDER_PIPELINE_BUNDLE", "quay.io/konflux-ci/tekton-catalog/pipeline-tekton-bundle-builder:devel")
+	case "tekton-bundle-builder-oci-ta":
+		return utils.GetEnv("CUSTOM_TEKTON_BUNDLE_BUILDER_OCI_TA_PIPELINE_BUNDLE", "quay.io/konflux-ci/tekton-catalog/pipeline-tekton-bundle-builder-oci-ta:devel")
 	default:
 		return ""
 	}
@@ -326,6 +339,50 @@ func applyAdditionalTagsInPipelineBundle(customDockerBuildBundle string, pipelin
 			t.Params = append(t.Params, tektonpipeline.Param{Name: "ADDITIONAL_TAGS", Value: *tektonpipeline.NewStructuredValues(additionalTags[0], additionalTags[1:]...)})
 		}
 	}
+
+	if newPipelineYaml, err = yaml.Marshal(dockerPipelineObject); err != nil {
+		return "", fmt.Errorf("error when marshalling a new pipeline to YAML: %v", err)
+	}
+
+	tag := fmt.Sprintf("%d-%s", time.Now().Unix(), util.GenerateRandomString(4))
+	quayOrg := utils.GetEnv(constants.QUAY_E2E_ORGANIZATION_ENV, constants.DefaultQuayOrg)
+	newDockerBuildPipelineImg := strings.ReplaceAll(constants.DefaultImagePushRepo, constants.DefaultQuayOrg, quayOrg)
+	var newDockerBuildPipeline, _ = name.ParseReference(fmt.Sprintf("%s:pipeline-bundle-%s", newDockerBuildPipelineImg, tag))
+	// Build and Push the tekton bundle
+	if authenticator, err = utils.GetAuthenticatorForImageRef(newDockerBuildPipeline, os.Getenv("QUAY_TOKEN")); err != nil {
+		return "", fmt.Errorf("error when getting authenticator: %v", err)
+	}
+	authOption := remoteimg.WithAuth(authenticator)
+	if err = tekton.BuildAndPushTektonBundle(newPipelineYaml, newDockerBuildPipeline, authOption); err != nil {
+		return "", fmt.Errorf("error when building/pushing a tekton pipeline bundle: %v", err)
+	}
+	return newDockerBuildPipeline.String(), nil
+}
+
+func removeTasksFromPipelineBundle(customDockerBuildBundle string, pipelineBundleName constants.BuildPipelineType, taskNames []string) (string, error) {
+	var tektonObj runtime.Object
+	var err error
+	var newPipelineYaml []byte
+	var authenticator authn.Authenticator
+	// Extract docker-build pipeline as tekton object from the bundle
+	if tektonObj, err = tekton.ExtractTektonObjectFromBundle(customDockerBuildBundle, "pipeline", pipelineBundleName); err != nil {
+		return "", fmt.Errorf("failed to extract the Tekton Pipeline from bundle: %+v", err)
+	}
+	dockerPipelineObject := tektonObj.(*tektonpipeline.Pipeline)
+
+	keptTasks := make([]tektonpipeline.PipelineTask, 0, len(dockerPipelineObject.Spec.Tasks))
+	for _, t := range dockerPipelineObject.Spec.Tasks {
+		if slices.Contains(taskNames, t.Name) {
+			GinkgoWriter.Printf("Removed task %q from the pipeline bundle\n", t.Name)
+			continue
+		}
+		keptTasks = append(keptTasks, t)
+	}
+
+	if len(keptTasks) == len(dockerPipelineObject.Spec.Tasks) {
+		return customDockerBuildBundle, nil
+	}
+	dockerPipelineObject.Spec.Tasks = keptTasks
 
 	if newPipelineYaml, err = yaml.Marshal(dockerPipelineObject); err != nil {
 		return "", fmt.Errorf("error when marshalling a new pipeline to YAML: %v", err)
