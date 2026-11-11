@@ -2,6 +2,11 @@
 
 <!-- Format guidelines: https://keepachangelog.com/en/1.1.0/#how -->
 
+<!--
+Regular Hermeto updates should use patch task version bumps.
+Use a minor task version bump only when it provides a significant user-facing update.
+-->
+
 ## Unreleased
 
 <!--
